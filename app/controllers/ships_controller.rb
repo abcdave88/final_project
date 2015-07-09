@@ -4,6 +4,8 @@ class ShipsController < ApplicationController
     Ship.populate_database
     Location.populate_database
     Destination.populate_database
+    binding.pry
+    nil
   end
 
 end

@@ -25,7 +25,7 @@ class Ship < ActiveRecord::Base
     #   binding.pry
     #   nil
     response['objects'].each do |ship|  
-      Ship.create(name: ship["vessel"]["name"], heading: ship["vessel"]["heading"], status: ship["vessel"]["status"], lastport: ship["vessel"]["lastport"]["name"], flag: ship["vessel"]["flag"], photo: ship["vessel"]["photos"])
+      Ship.create(name: ship["vessel"]["name"], heading: ship["vessel"]["heading"], status: ship["vessel"]["status"], lastport: ship["vessel"]["lastport"]["name"], flag: ship["vessel"]["flag"], photo: ship["vessel"]["photos"], mmsinumber: ship["vessel"]["mmsinumber"])
       # binding.pry
     end
 

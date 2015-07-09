@@ -4,7 +4,4 @@ class ShipsController < ApplicationController
     Ship.populate_database
   end
 
-  # def self.populate_database
-
-  # end
 end

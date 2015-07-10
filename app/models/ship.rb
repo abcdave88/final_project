@@ -1,6 +1,7 @@
 require 'multi_xml'
 require 'httparty'
 
+
 class Ship < ActiveRecord::Base
   has_many :locations
   has_many :destinations
@@ -25,7 +26,7 @@ class Ship < ActiveRecord::Base
     #   binding.pry
     #   nil
     response['objects'].each do |ship|  
-      Ship.create(name: ship["vessel"]["name"], heading: ship["vessel"]["heading"], status: ship["vessel"]["status"], lastport: ship["vessel"]["lastport"]["name"], flag: ship["vessel"]["flag"], photo: ship["vessel"]["photos"], mmsinumber: ship["vessel"]["mmsinumber"])
+      Ship.find_or_create_by(name: ship["vessel"]["name"], heading: ship["vessel"]["heading"], status: ship["vessel"]["status"], lastport: ship["vessel"]["lastport"]["name"], flag: ship["vessel"]["flag"], photo: ship["vessel"]["photos"], mmsinumber: ship["vessel"]["mmsinumber"])
       # binding.pry
     end
 

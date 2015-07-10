@@ -15,10 +15,24 @@
 #
 require 'rake'
 
+CelesteApp::Application.load_tasks
+
 class Job
   def perform
     Rake::Task[':shipping_data'].invoke
   end
 end
 
-Crono.perform(Job).every 1.hours
+Crono.perform(Job).every 1.hours, at: {min:00}
+
+# require 'rake'
+# # Be sure to change AppName to your application name!
+# AppName::Application.load_tasks
+
+# class Test
+#   def perform
+#     Rake::Task['crono:hello'].invoke
+#   end
+# end
+
+# Crono.perform(Test).every 5.second

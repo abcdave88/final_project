@@ -11,8 +11,8 @@ task :shipping_data => :environment do
   end
   response['objects'].each do |location|
     mmsi = location["vessel"]["mmsinumber"]
-    ship_id = Ship.where(mmsinumber: mmsi).ids.first
-    l1 = Location.create(latitude: location["vessel"]["latitude"], longitude: location["vessel"]["longitude"], position_received: location["vessel"]["positionreceived"], mmsinumber: location["vessel"]["mmsinumber"], ship_id: ship_id)
+    ship_id = Ship.where(mmsinumber: mmsi).ids.first 
+    l1 = Location.find_or_create_by(latitude: location["vessel"]["latitude"], longitude: location["vessel"]["longitude"], position_received: location["vessel"]["positionreceived"], mmsinumber: location["vessel"]["mmsinumber"], ship_id: ship_id)
     puts l1 
   end
 
@@ -21,14 +21,14 @@ task :shipping_data => :environment do
     ship_id = Ship.where(mmsinumber: mmsi).ids.first
     d1 = Destination.where(name: destination["vessel"]["destination"])
     # binding.pry
-    if d1.name == destination["vessel"]["destination"]
-      d1.assign_attributes(eta_time: destination["vessel"]["etatime"])
-      d1.save
+    # if d1.name == destination["vessel"]["destination"]
+    #   d1.assign_attributes(eta_time: destination["vessel"]["etatime"])
+    #   d1.save
+    #   puts d1
+    # else  
+      d1 = Destination.find_or_create_by(name: destination["vessel"]["destination"], eta_time: destination["vessel"]["etatime"], mmsinumber: destination["vessel"]["mmsinumber"], ship_id: ship_id)
       puts d1
-    else  
-      d1 = Destination.create(name: destination["vessel"]["destination"], eta_time: destination["vessel"]["etatime"], mmsinumber: destination["vessel"]["mmsinumber"], ship_id: ship_id)
-      puts d1
-    end
+    # end
   end
 end
 

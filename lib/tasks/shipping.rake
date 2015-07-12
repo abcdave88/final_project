@@ -30,6 +30,7 @@ task :shipping_data => :environment do
       puts d1
     # end
   end
+  puts 'rake task completed'
 end
 
 # Ship.first.assign

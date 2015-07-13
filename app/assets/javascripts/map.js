@@ -14,6 +14,7 @@ $(document).ready(function(){
     url: '/'
   }).done(function(data){
     console.log(data);
+    debugger;
   });
 
   map.on('style.load', function() {

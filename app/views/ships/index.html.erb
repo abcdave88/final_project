@@ -1,5 +1,9 @@
 
-<h1>Ships Index</h1>
+
+<div id="header">
+  <h1 id="title">Celeste</h1> 
+  <%= select_tag "ships", options_from_collection_for_select(@ships, "id", "name") %>
+</div>
 
 <div id="map">
   

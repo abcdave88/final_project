@@ -14,21 +14,42 @@ $(document).ready(function(){
     url: '/'
   }).done(function(data){
     console.log(data);
-    debugger;
+    // debugger;
       $(data.destinations).each(function(index, destination){
-        debugger;
-        
+        var destinationName = destination.name
+        var eta = destination.eta_time
+        var shipIdArray = []
+        $(data.ships).each(function(index, ship){shipIdArray.push(ship.id)});
+        var biggestIDs = [];
+        $(shipIdArray).each(function(index, shipID){
+          var temp = data.locations.filter(function(location){
+            if (location.ship_id == shipID){
+              return true;
+            } else return false;
+          })
+          biggestIDs.push(temp[temp.length-1].id)
+        })
+        console.log(biggestIDs);
+
         $(data.locations).each(function(index, location){
-          debugger;
           var ship_id = location.ship_id;
           var ship_lat = location.latitude;
           var ship_long = location.longitude;
+          var bigIcon = 'cafe';
+          var smallIcon = 'cafe';
           var shipName = data.ships.filter(function(ship){
             if (ship.id === ship_id){
               return true
             } else {return false};
           })[0].name;
-          addMarker(shipName, ship_lat, ship_long);
+          if (biggestIDs.indexOf(location.id) !== -1) {
+            console.log(location.id);
+            addLocationMarker(shipName, ship_lat, ship_long, '#BE9A6B');//big icon holding name - requires path
+          } else {
+            addLocationMarker(shipName, ship_lat, ship_long, '#FFFFFF');//small icon holding name - requires path
+
+          }
+
       })//end of locations loop
     })//end of destinations loop
   });
@@ -38,7 +59,14 @@ $(document).ready(function(){
 // 3 for the marker wee neeed /coordinates/ship-name/marker-image & any key ship data
 // 4 
 
-  function addMarker(shipName, lat, long){ 
+  // function getDestinationCoord(destination){
+  //   $.get("http://api.tiles.mapbox.com/v4/geocode/mapbox.places/"+destination+".json?access_token=pk.eyJ1IjoiYWJjZGF2ZTg4IiwiYSI6IjU2MDE1YzUwYjI5NTg3YTExYTJiOWMwNmI2NWEzOWY4In0._qV9cnHz0Q0Uk28oJtUslQ", function(data){
+  //     console.log(data);
+  //     // debugger
+  //   })
+  // };
+
+  function addLocationMarker(shipName, lat, long, color){ 
     L.mapbox.featureLayer({
         // this feature is in the GeoJSON format: see geojson.org
         // for the full specification
@@ -57,9 +85,11 @@ $(document).ready(function(){
             description: 'Daveys Ship',
             // one can customize markers by adding simplestyle properties
             // https://www.mapbox.com/guides/an-open-platform/#simplestyle
-            'marker-size': 'large',
-            'marker-color': '#BE9A6B',
-            'marker-symbol': 'cafe'
+            'marker-size': 'small',
+            // 'marker-color': '#BE9A6B',
+            // 'marker-color': '#FFFFFF',
+            'marker-color': color,
+            'marker-symbol': 'cafe' //pass in path to desired image
         }
     }).addTo(map);
   };

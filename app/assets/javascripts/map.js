@@ -9,7 +9,30 @@ $(document).ready(function(){
   }).setView([53.9560855309879, -2.8125], 2);
 
 
+  function showSingleShip(){
+    $.ajax({
+      type: 'GET',
+      dataType: 'JSON',
+      url: '/'
+    }).done(function(data){
+      data.ships.filter(function(ship){
+        var shipName = ($('select').val())
+        // console.log(shipName)
+        // console.log(ship.name)
+        if (ship.name == shipName){
+          console.log(ship)
+        }
+        else{
+          console.log('fuck')
+        }
+      })
+    })//end of .done
+  }//end of showSingleShip
+
+
+
   function showAllShips(){
+    console.log('show all')
     $.ajax({
       type: 'GET',
       dataType: 'JSON',
@@ -54,7 +77,7 @@ $(document).ready(function(){
       })//end of destinations loop
     });//end of data.done
   }//end of show all ships
-  
+
 // 1 wrap mapbox marker function in a fucntion 
 // 2 call that function for every marker we want
 // 3 for the marker wee neeed /coordinates/ship-name/marker-image & any key ship data
@@ -94,4 +117,8 @@ $(document).ready(function(){
         }
     }).addTo(map);
   };
+
+$('#show_all').on('click', showAllShips);
+// $('#hide_all').on('click', hideAll);
+$('#select_tag').on('change', showSingleShip);
 })//end of document.ready

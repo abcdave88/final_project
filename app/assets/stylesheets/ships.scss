@@ -18,3 +18,24 @@ body {
 #header{
   // bottom: 80%;
 }
+
+#title{
+  font-family: 'Pirata One', cursive;
+  font-size: 80px;
+  position: relative;
+  margin-top: 0px;
+  letter-spacing: 15px;
+  display: inline-block
+}
+
+#select_tag{
+  display:inline-block;
+  position: relative;
+  margin-left: 60px;
+}
+
+#ship_image{
+  display: inline-block;
+  position: relative;
+  float: right;
+}

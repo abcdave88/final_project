@@ -4,56 +4,57 @@ $(document).ready(function(){
   var map = L.mapbox.map('map', 'abcdave88.mmjnge0o',{
     continuousWorld: false,
     noWrap: true,
-    maxZoom: 12,
+    maxZoom: 5,
     minZoom: 2
-  }).setView([53.9560855309879, -2.8125], 3);
+  }).setView([53.9560855309879, -2.8125], 2);
 
-  $.ajax({
-    type: 'GET',
-    dataType: 'JSON',
-    url: '/'
-  }).done(function(data){
-    console.log(data);
-    // debugger;
-      $(data.destinations).each(function(index, destination){
-        var destinationName = destination.name
-        var eta = destination.eta_time
-        var shipIdArray = []
-        $(data.ships).each(function(index, ship){shipIdArray.push(ship.id)});
-        var biggestIDs = [];
-        $(shipIdArray).each(function(index, shipID){
-          var temp = data.locations.filter(function(location){
-            if (location.ship_id == shipID){
-              return true;
-            } else return false;
+
+  function showAllShips(){
+    $.ajax({
+      type: 'GET',
+      dataType: 'JSON',
+      url: '/'
+    }).done(function(data){
+      console.log(data);
+      // debugger;
+        $(data.destinations).each(function(index, destination){
+          var destinationName = destination.name
+          var eta = destination.eta_time
+          var shipIdArray = []
+          $(data.ships).each(function(index, ship){shipIdArray.push(ship.id)});
+          var biggestIDs = [];
+          $(shipIdArray).each(function(index, shipID){
+            var temp = data.locations.filter(function(location){
+              if (location.ship_id == shipID){
+                return true;
+              } else return false;
+            })
+            biggestIDs.push(temp[temp.length-1].id)
           })
-          biggestIDs.push(temp[temp.length-1].id)
-        })
-        console.log(biggestIDs);
+          console.log(biggestIDs);
 
-        $(data.locations).each(function(index, location){
-          var ship_id = location.ship_id;
-          var ship_lat = location.latitude;
-          var ship_long = location.longitude;
-          var bigIcon = 'cafe';
-          var smallIcon = 'cafe';
-          var shipName = data.ships.filter(function(ship){
-            if (ship.id === ship_id){
-              return true
-            } else {return false};
-          })[0].name;
-          if (biggestIDs.indexOf(location.id) !== -1) {
-            console.log(location.id);
-            addLocationMarker(shipName, ship_lat, ship_long, '#BE9A6B');//big icon holding name - requires path
-          } else {
-            addLocationMarker(shipName, ship_lat, ship_long, '#FFFFFF');//small icon holding name - requires path
-
-          }
-
-      })//end of locations loop
-    })//end of destinations loop
-  });
-
+          $(data.locations).each(function(index, location){
+            var ship_id = location.ship_id;
+            var ship_lat = location.latitude;
+            var ship_long = location.longitude;
+            var bigIcon = "assets/red-marker.png";
+            var smallIcon = "assets/yellow-marker.png";
+            var shipName = data.ships.filter(function(ship){
+              if (ship.id === ship_id){
+                return true
+              } else {return false};
+            })[0].name;
+            if (biggestIDs.indexOf(location.id) !== -1) {
+              console.log(location.id);
+              addLocationMarker(shipName, ship_lat, ship_long, bigIcon);//big icon holding name - requires path
+            } else {
+              addLocationMarker(shipName, ship_lat, ship_long, smallIcon);//small icon holding name - requires path
+            }//end of if else statment
+        })//end of locations loop
+      })//end of destinations loop
+    });//end of data.done
+  }//end of show all ships
+  
 // 1 wrap mapbox marker function in a fucntion 
 // 2 call that function for every marker we want
 // 3 for the marker wee neeed /coordinates/ship-name/marker-image & any key ship data
@@ -66,7 +67,7 @@ $(document).ready(function(){
   //   })
   // };
 
-  function addLocationMarker(shipName, lat, long, color){ 
+  function addLocationMarker(shipName, lat, long, img){ 
     L.mapbox.featureLayer({
         // this feature is in the GeoJSON format: see geojson.org
         // for the full specification
@@ -82,14 +83,14 @@ $(document).ready(function(){
         },
         properties: {
             title: shipName,
-            description: 'Daveys Ship',
-            // one can customize markers by adding simplestyle properties
-            // https://www.mapbox.com/guides/an-open-platform/#simplestyle
-            'marker-size': 'small',
-            // 'marker-color': '#BE9A6B',
-            // 'marker-color': '#FFFFFF',
-            'marker-color': color,
-            'marker-symbol': 'cafe' //pass in path to desired image
+            description: 'Daveys Ship', 
+            "icon": {
+              "iconUrl": img,
+              // "iconSize": [100, 100],
+              // "iconAnchor": [50, 50],
+              // "popupAnchor": [0, -55],
+              // "className": "dot"
+            }
         }
     }).addTo(map);
   };

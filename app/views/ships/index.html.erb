@@ -2,7 +2,15 @@
 
 <div id="header">
   <h1 id="title">Celeste</h1> 
-  <%= select_tag "ships", options_from_collection_for_select(@ships, "id", "name"), :prompt => '------SELECT SHIP------' %>
+
+  <div id="select_tag">
+    <%= select_tag "ships", options_from_collection_for_select(@ships, "name", "name"), :prompt => '------SELECT SHIP------' %>
+  </div>
+
+  <div id="ship_image">
+    <%=image_tag("boat.png", :size => "100x130")%>
+  </div>
+  <button id="show_all">Show All</button>
 </div>
 
 <div id="map">

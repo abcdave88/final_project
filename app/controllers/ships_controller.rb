@@ -67,4 +67,7 @@ class ShipsController < ApplicationController
 
   end
 
+  def show
+    # @ship = Ship.where(name:)
+  end
 end

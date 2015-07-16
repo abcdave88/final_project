@@ -4,9 +4,15 @@ $(document).ready(function(){
   var map = L.mapbox.map('map', 'abcdave88.mmjnge0o',{
     continuousWorld: false,
     noWrap: true,
-    maxZoom: 5,
+    maxZoom: 8,
     minZoom: 2
   }).setView([53.9560855309879, -2.8125], 2);
+
+var markerLayer;
+
+  function hideAll(){
+    $('.leaflet-marker-icon').hide();
+  }
 
 
   function showSingleShip(){
@@ -15,20 +21,49 @@ $(document).ready(function(){
       dataType: 'JSON',
       url: '/'
     }).done(function(data){
+      // if(markerLayer) {
+      //   debugger;
+      //   // map.removeLayer(markerLayer);
+      //   markerLayer.removeLayer();
+      // };
+      $('.leaflet-marker-icon').hide();
+      var shipId;
+      var shipName;
+      var destination;
+      var speed;
+      var eta;
+      var bigIcon = "#ff0000"
+      var smallIcon = "#FFFF00"
       data.ships.filter(function(ship){
-        var shipName = ($('select').val())
+        shipName = ($('select').val())
         // console.log(shipName)
         // console.log(ship.name)
-        if (ship.name == shipName){
-          console.log(ship)
+        if (ship.name === shipName){
+           shipId = ship.id 
+           destination = ship.destination
+           speed = ship.speed
+           eta = ship.eta
+           debugger;
+          console.log(shipId)
+           console.log('this is the ship id')
         }
         else{
-          console.log('fuck')
+          console.log('wrong ship')
         }
-      })
+      })//end of ship filter
+      var shipLocations = data.locations.filter(function(location){
+        if (shipId === location.ship_id){
+          return location
+        }
+      })//end of location filter
+     var currentLocation = shipLocations[shipLocations.length-1]
+     shipLocations = shipLocations.slice(0, shipLocations.length-1);
+     addLocationMarker(shipName, currentLocation.latitude, currentLocation.longitude, bigIcon, destination, speed, eta);
+     $(shipLocations).each(function(index, location){
+      addLocationMarker(shipName, location.latitude, location.longitude, smallIcon, destination, speed, eta);
+     })
     })//end of .done
   }//end of showSingleShip
-
 
 
   function showAllShips(){
@@ -40,10 +75,13 @@ $(document).ready(function(){
     }).done(function(data){
       console.log(data);
       // debugger;
-        $(data.destinations).each(function(index, destination){
-          var destinationName = destination.name
-          var eta = destination.eta_time
+        // $(data.destinations).each(function(index, destination){
+        //   var destinationName = destination.name
+        //   var eta = destination.eta_time
           var shipIdArray = []
+          var destination;
+          var speed;
+          var eta;
           $(data.ships).each(function(index, ship){shipIdArray.push(ship.id)});
           var biggestIDs = [];
           $(shipIdArray).each(function(index, shipID){
@@ -60,21 +98,24 @@ $(document).ready(function(){
             var ship_id = location.ship_id;
             var ship_lat = location.latitude;
             var ship_long = location.longitude;
-            var bigIcon = "assets/red-marker.png";
-            var smallIcon = "assets/yellow-marker.png";
+            var bigIcon = "#ff0000"
+            var smallIcon = "#FFFF00"
             var shipName = data.ships.filter(function(ship){
               if (ship.id === ship_id){
+                destination = ship.destination
+                speed = ship.speed
+                eta = ship.eta
                 return true
               } else {return false};
             })[0].name;
             if (biggestIDs.indexOf(location.id) !== -1) {
               console.log(location.id);
-              addLocationMarker(shipName, ship_lat, ship_long, bigIcon);//big icon holding name - requires path
+              addLocationMarker(shipName, ship_lat, ship_long, bigIcon, destination, speed, eta);//big icon holding name - requires path
             } else {
-              addLocationMarker(shipName, ship_lat, ship_long, smallIcon);//small icon holding name - requires path
+              addLocationMarker(shipName, ship_lat, ship_long, smallIcon, destination, speed, eta);//small icon holding name - requires path
             }//end of if else statment
         })//end of locations loop
-      })//end of destinations loop
+      // })//end of destinations loop
     });//end of data.done
   }//end of show all ships
 
@@ -90,8 +131,8 @@ $(document).ready(function(){
   //   })
   // };
 
-  function addLocationMarker(shipName, lat, long, img){ 
-    L.mapbox.featureLayer({
+  function addLocationMarker(shipName, lat, long, img, destination, speed, eta){ 
+   markerLayer = L.mapbox.featureLayer({
         // this feature is in the GeoJSON format: see geojson.org
         // for the full specification
         type: 'Feature',
@@ -105,20 +146,20 @@ $(document).ready(function(){
             ]
         },
         properties: {
-            title: shipName,
-            description: 'Daveys Ship', 
-            "icon": {
-              "iconUrl": img,
-              // "iconSize": [100, 100],
-              // "iconAnchor": [50, 50],
-              // "popupAnchor": [0, -55],
-              // "className": "dot"
-            }
+          title: shipName,
+          description: 'Destination: ' +destination+ ', Speed: ' +speed+' eta: '+eta+ '',
+          // one can customize markers by adding simplestyle properties
+          // https://www.mapbox.com/guides/an-open-platform/#simplestyle
+          'marker-size': 'small',
+          'marker-color': img,
+          'marker-symbol': 'ferry'
         }
-    }).addTo(map);
+    });
+
+    markerLayer.addTo(map);
   };
 
 $('#show_all').on('click', showAllShips);
-// $('#hide_all').on('click', hideAll);
+$('#hide_all').on('click', hideAll);
 $('#select_tag').on('change', showSingleShip);
 })//end of document.ready

@@ -4,7 +4,7 @@ task :shipping_data => :environment do
   response = HTTParty.get("http://www.fleetmon.com/api/p/personal-v1/myfleet/?username=#{ENV["FLEETMON_ID"]}&api_key=#{ENV["FLEETMON_API_KEY"]}&format=json")
   response['objects'].each do |ship|  
     s1 = Ship.find_or_create_by(name: ship["vessel"]["name"])
-    s1.assign_attributes(heading: ship["vessel"]["heading"], status: ship["vessel"]["status"], lastport: ship["vessel"]["lastport"]["name"], flag: ship["vessel"]["flag"], photo: ship["vessel"]["photos"], mmsinumber: ship["vessel"]["mmsinumber"])
+    s1.assign_attributes(heading: ship["vessel"]["heading"], status: ship["vessel"]["status"], lastport: ship["vessel"]["lastport"]["name"], flag: ship["vessel"]["flag"], photo: ship["vessel"]["photos"], mmsinumber: ship["vessel"]["mmsinumber"], destination: ship["vessel"]["destination"], speed: ship["vessel"]["speed"],  eta: ship["vessel"]["etatime"])
     s1.save
     # puts s1
     # binding.pry

@@ -66,8 +66,4 @@ class ShipsController < ApplicationController
     # render json: @ships
 
   end
-
-  def show
-    # @ship = Ship.where(name:)
-  end
 end
